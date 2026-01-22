@@ -37,6 +37,8 @@ interface DashboardContextType {
     stats: Stats;
     devices: Device[];
     smsLogs: Sms[];
+    recipients: string[];
+    templates: { id: string; name: string; content: string }[];
     loading: boolean;
     isAddDeviceModalOpen: boolean;
     setIsAddDeviceModalOpen: (open: boolean) => void;
@@ -55,24 +57,34 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
     const [stats, setStats] = useState<Stats>({ deviceCount: 0, smsCount: 0 });
     const [devices, setDevices] = useState<Device[]>([]);
     const [smsLogs, setSmsLogs] = useState<Sms[]>([]);
+    const [recipients, setRecipients] = useState<string[]>([]);
     const [loading, setLoading] = useState(true);
     const [isAddDeviceModalOpen, setIsAddDeviceModalOpen] = useState(false);
     const [selectedDeviceId, setSelectedDeviceId] = useState<number | null>(null);
+
+    const templates = [
+        { id: "1", name: "Welcome Message", content: "Welcome to BitText! Your account is now active and ready to use." },
+        { id: "2", name: "OTP Verification", content: "Your BitText verification code is: {{code}}. Do not share this with anyone." },
+        { id: "3", name: "Payment Success", content: "Success! Your payment of {{amount}} has been received. Thank you for choosing BitText." },
+        { id: "4", name: "Appointment Reminder", content: "Friendly reminder: You have an appointment tomorrow at {{time}}. See you then!" }
+    ];
 
     const fetchDashboardData = useCallback(async () => {
         if (!isAuthenticated || !user) return;
 
         try {
             setLoading(true);
-            const [statsRes, devicesRes, smsRes] = await Promise.all([
+            const [statsRes, devicesRes, smsRes, recipientsRes] = await Promise.all([
                 api.get("/api/dashboard/stats"),
                 api.get("/api/dashboard/devices"),
-                api.get("/api/dashboard/sms")
+                api.get("/api/dashboard/sms"),
+                api.get("/api/dashboard/recipients")
             ]);
 
             setStats(statsRes.data);
             setDevices(devicesRes.data);
             setSmsLogs(smsRes.data);
+            setRecipients(recipientsRes.data.map((r: { to: string }) => r.to));
         } catch (error) {
             console.error("Error fetching dashboard data", error);
         } finally {
@@ -117,6 +129,8 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
             stats,
             devices,
             smsLogs,
+            recipients,
+            templates,
             loading,
             isAddDeviceModalOpen,
             setIsAddDeviceModalOpen,

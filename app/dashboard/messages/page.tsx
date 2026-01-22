@@ -7,7 +7,7 @@ import api from "../../utils/api";
 import { StatusBadge } from "../../../components/DashboardComponents";
 
 export default function MessagesPage() {
-    const { user, devices, smsLogs, fetchDashboardData } = useDashboard();
+    const { user, devices, smsLogs, fetchDashboardData, recipients, templates } = useDashboard();
     const [messagingSubTab, setMessagingSubTab] = useState("send");
     const [sendForm, setSendForm] = useState({
         deviceId: devices.length > 0 ? devices[0].id.toString() : "",
@@ -43,6 +43,10 @@ export default function MessagesPage() {
         }
     };
 
+    const applyTemplate = (content: string) => {
+        setSendForm({ ...sendForm, message: content });
+    };
+
     return (
         <div className="space-y-6">
             <div>
@@ -75,56 +79,92 @@ export default function MessagesPage() {
             </div>
 
             {messagingSubTab === "send" ? (
-                <div className="bg-[#111115] border border-white/5 rounded-2xl p-8 shadow-xl max-w-3xl">
-                    <form onSubmit={handleSendMessage} className="space-y-6">
-                        <div className="space-y-2.5">
-                            <label className="text-sm font-medium text-gray-300">Sending Device</label>
-                            <div className="relative">
-                                <select
-                                    className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 appearance-none cursor-pointer hover:border-white/20 transition-colors"
-                                    value={sendForm.deviceId}
-                                    onChange={e => setSendForm({ ...sendForm, deviceId: e.target.value })}
-                                >
-                                    <option value="" disabled>Select a device</option>
-                                    {devices.map(d => (
-                                        <option key={d.id} value={d.id}>{d.name} • {d.active ? '🟢 Online' : '🔴 Offline'}</option>
-                                    ))}
-                                </select>
-                                <Smartphone className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2 bg-[#111115] border border-white/5 rounded-2xl p-8 shadow-xl">
+                        <form onSubmit={handleSendMessage} className="space-y-6">
+                            <div className="space-y-2.5">
+                                <label className="text-sm font-medium text-gray-300">Sending Device</label>
+                                <div className="relative">
+                                    <select
+                                        className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 appearance-none cursor-pointer hover:border-white/20 transition-colors"
+                                        value={sendForm.deviceId}
+                                        onChange={e => setSendForm({ ...sendForm, deviceId: e.target.value })}
+                                    >
+                                        <option value="" disabled>Select a device</option>
+                                        {devices.map(d => (
+                                            <option key={d.id} value={d.id}>{d.name} • {d.active ? '🟢 Online' : '🔴 Offline'}</option>
+                                        ))}
+                                    </select>
+                                    <Smartphone className="absolute right-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500 pointer-events-none" />
+                                </div>
                             </div>
-                        </div>
 
-                        <div className="space-y-2.5">
-                            <label className="text-sm font-medium text-gray-300">Recipient Number</label>
-                            <input
-                                type="text"
-                                placeholder="+1 (555) 000-0000"
-                                className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 hover:border-white/20 transition-colors font-mono"
-                                value={sendForm.to}
-                                onChange={e => setSendForm({ ...sendForm, to: e.target.value })}
-                            />
-                        </div>
+                            <div className="space-y-2.5">
+                                <label className="text-sm font-medium text-gray-300">Recipient Number</label>
+                                <div className="relative">
+                                    <input
+                                        list="recipients-list"
+                                        type="text"
+                                        placeholder="+1 (555) 000-0000"
+                                        className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 hover:border-white/20 transition-colors font-mono"
+                                        value={sendForm.to}
+                                        onChange={e => setSendForm({ ...sendForm, to: e.target.value })}
+                                    />
+                                    <datalist id="recipients-list">
+                                        {recipients.map((r, i) => (
+                                            <option key={i} value={r} />
+                                        ))}
+                                    </datalist>
+                                </div>
+                            </div>
 
-                        <div className="space-y-2.5">
-                            <label className="text-sm font-medium text-gray-300">Message Content</label>
-                            <textarea
-                                rows={6}
-                                className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 resize-none hover:border-white/20 transition-colors leading-relaxed"
-                                placeholder="Type your message here..."
-                                value={sendForm.message}
-                                onChange={e => setSendForm({ ...sendForm, message: e.target.value })}
-                            />
-                        </div>
+                            <div className="space-y-2.5">
+                                <label className="text-sm font-medium text-gray-300">Message Content</label>
+                                <textarea
+                                    rows={6}
+                                    className="w-full bg-[#050505] border border-white/10 rounded-xl px-4 py-3.5 text-white focus:outline-none focus:border-blue-500/50 resize-none hover:border-white/20 transition-colors leading-relaxed"
+                                    placeholder="Type your message here..."
+                                    value={sendForm.message}
+                                    onChange={e => setSendForm({ ...sendForm, message: e.target.value })}
+                                />
+                            </div>
 
-                        <button
-                            type="submit"
-                            disabled={sending}
-                            className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl transition-all hover:shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2 active:scale-[0.99]"
-                        >
-                            {sending ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
-                            {sending ? "Dispatching..." : "Send Message"}
-                        </button>
-                    </form>
+                            <button
+                                type="submit"
+                                disabled={sending}
+                                className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-4 rounded-xl transition-all hover:shadow-lg hover:shadow-blue-500/25 flex items-center justify-center gap-2 active:scale-[0.99]"
+                            >
+                                {sending ? <RefreshCw className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                                {sending ? "Dispatching..." : "Send Message"}
+                            </button>
+                        </form>
+                    </div>
+
+                    <div className="bg-[#111115] border border-white/5 rounded-2xl p-6 shadow-xl space-y-6">
+                        <div className="flex items-center gap-2 text-white font-bold text-lg mb-2">
+                            <Layers className="w-5 h-5 text-blue-500" />
+                            SMS Templates
+                        </div>
+                        <div className="space-y-3">
+                            {templates.map(t => (
+                                <button
+                                    key={t.id}
+                                    onClick={() => applyTemplate(t.content)}
+                                    className="w-full text-left p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/10 transition-all group"
+                                >
+                                    <div className="text-sm font-semibold text-gray-200 mb-1 group-hover:text-blue-400 transition-colors">
+                                        {t.name}
+                                    </div>
+                                    <div className="text-xs text-gray-500 line-clamp-2 leading-relaxed">
+                                        {t.content}
+                                    </div>
+                                </button>
+                            ))}
+                        </div>
+                        <div className="p-4 rounded-xl bg-blue-500/5 border border-blue-500/10 text-xs text-blue-300/80 leading-relaxed">
+                            <span className="font-bold text-blue-400">Pro Tip:</span> Tap a template to quickly fill the message editor. More custom templates coming soon!
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <div className="bg-[#111115] border border-white/5 rounded-2xl overflow-hidden shadow-xl">
