@@ -102,8 +102,8 @@ export default function Docs() {
                             </h2>
                             <p className="text-gray-400 mb-4">All API requests should be made to the following base URL:</p>
                             <div className="bg-white/[0.03] border border-white/10 p-4 rounded-xl font-mono text-blue-300 flex justify-between items-center">
-                                <span>https://api.bittext.space/api</span>
-                                <button onClick={() => handleCopy("https://api.bittext.space/api", "base-url")} className="text-gray-500 hover:text-white transition-colors">
+                                <span>https://api.bittext.iamraihan.site/api</span>
+                                <button onClick={() => handleCopy("https://api.bittext.iamraihan.site/api", "base-url")} className="text-gray-500 hover:text-white transition-colors">
                                     <Copy className="w-4 h-4" />
                                 </button>
                             </div>
