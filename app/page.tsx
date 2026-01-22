@@ -187,7 +187,7 @@ export default function Home() {
               <pre className="p-8 text-sm font-mono text-gray-300 bg-black/50 overflow-x-auto leading-relaxed">
                 {`import requests
 
-url = "https://api.bittext.space/api/sms/send"
+url = "https://api.bittext.iamraihan.site/api/sms/send"
 headers = {
     "x-api-key": "your_api_key",
     "Content-Type": "application/json"
