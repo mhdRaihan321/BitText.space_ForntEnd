@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Navbar from "../components/Navbar";
 import Link from "next/link";
 import { ArrowRight, Smartphone, Globe, Code, Zap, Key } from "lucide-react";
@@ -16,6 +17,63 @@ interface User {
 
 export default function Home() {
   const { user, isAuthenticated } = useRequireAuth<User>();
+  const [selectedLang, setSelectedLang] = useState("python");
+
+  const snippets: { [key: string]: { code: string, file: string } } = {
+    python: {
+      file: "send_sms.py",
+      code: `import requests
+
+url = "https://api.bittext.iamraihan.site/api/sms/send"
+headers = {
+    "x-api-key": "your_api_key",
+    "Content-Type": "application/json"
+}
+payload = {
+    "to": "+1234567890",
+    "message": "Hello from BitText!",
+    "deviceId": 42
+}
+
+response = requests.post(url, json=payload, headers=headers)
+print(response.json())`
+    },
+    javascript: {
+      file: "send_sms.js",
+      code: `const axios = require('axios');
+
+async function sendSMS() {
+  try {
+    const response = await axios.post('https://api.bittext.iamraihan.site/api/sms/send', {
+      to: '+1234567890',
+      message: 'Hello from BitText!',
+      deviceId: 42
+    }, {
+      headers: {
+        'x-api-key': 'your_api_key',
+        'Content-Type': 'application/json'
+      }
+    });
+    console.log(response.data);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+sendSMS();`
+    },
+    curl: {
+      file: "terminal",
+      code: `curl -X POST https://api.bittext.iamraihan.site/api/sms/send \\
+     -H "x-api-key: your_api_key" \\
+     -H "Content-Type: application/json" \\
+     -d '{
+           "to": "+1234567890",
+           "message": "Hello from BitText!",
+           "deviceId": 42
+         }'`
+    }
+  };
 
   const showDashornot = () => {
     if (isAuthenticated) {
@@ -177,29 +235,15 @@ export default function Home() {
             <div className="absolute -inset-1 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl blur opacity-25 group-hover:opacity-40 transition duration-1000"></div>
             <div className="relative rounded-2xl bg-black border border-white/10 shadow-2xl overflow-hidden">
               <div className="bg-white/5 p-4 flex items-center justify-between border-b border-white/10 px-6">
-                <div className="flex gap-2">
-                  <div className="w-3 h-3 rounded-full bg-red-500/50" />
-                  <div className="w-3 h-3 rounded-full bg-yellow-500/50" />
-                  <div className="w-3 h-3 rounded-full bg-green-500/50" />
+                <div className="flex gap-4">
+                  <button onClick={() => setSelectedLang("python")} className={`text-xs font-mono transition-colors ${selectedLang === 'python' ? 'text-blue-400' : 'text-gray-500 hover:text-gray-400'}`}>Python</button>
+                  <button onClick={() => setSelectedLang("javascript")} className={`text-xs font-mono transition-colors ${selectedLang === 'javascript' ? 'text-blue-400' : 'text-gray-500 hover:text-gray-400'}`}>Node.js</button>
+                  <button onClick={() => setSelectedLang("curl")} className={`text-xs font-mono transition-colors ${selectedLang === 'curl' ? 'text-blue-400' : 'text-gray-500 hover:text-gray-400'}`}>cURL</button>
                 </div>
-                <span className="text-xs text-gray-500 font-mono">send_sms.py</span>
+                <span className="text-xs text-gray-500 font-mono">{snippets[selectedLang].file}</span>
               </div>
-              <pre className="p-8 text-sm font-mono text-gray-300 bg-black/50 overflow-x-auto leading-relaxed">
-                {`import requests
-
-url = "https://api.bittext.iamraihan.site/api/sms/send"
-headers = {
-    "x-api-key": "your_api_key",
-    "Content-Type": "application/json"
-}
-payload = {
-    "to": "+1234567890",
-    "message": "Hello from BitText!",
-    "deviceId": 42
-}
-
-response = requests.post(url, json=payload, headers=headers)
-print(response.json())`}
+              <pre className="p-8 text-sm font-mono text-gray-300 bg-black/50 overflow-x-auto leading-relaxed min-h-[300px]">
+                {snippets[selectedLang].code}
               </pre>
             </div>
           </div>

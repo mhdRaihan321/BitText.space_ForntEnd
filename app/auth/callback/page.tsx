@@ -21,7 +21,9 @@ function CallbackContent() {
             api.get("/api/user/me")
                 .then(res => {
                     localStorage.setItem("user", JSON.stringify(res.data));
-                    router.push("/dashboard");
+                    const redirectTo = sessionStorage.getItem("redirectAfterLogin") || "/dashboard";
+                    sessionStorage.removeItem("redirectAfterLogin");
+                    router.push(redirectTo);
                 })
                 .catch(() => router.push("/login"));
         } else {

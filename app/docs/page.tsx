@@ -4,8 +4,10 @@ import Navbar from "../../components/Navbar";
 import { Copy, Terminal, Zap, Smartphone, Key, Code, Book, CheckCircle, AlertCircle } from "lucide-react";
 import { motion } from "framer-motion";
 import { useState } from "react";
+import { useRequireAuth } from "../hooks/useRequireAuth";
 
 export default function Docs() {
+    const { loading, isAuthenticated } = useRequireAuth();
     const [copied, setCopied] = useState<string | null>(null);
 
     const handleCopy = (text: string, id: string) => {
@@ -13,6 +15,14 @@ export default function Docs() {
         setCopied(id);
         setTimeout(() => setCopied(null), 2000);
     };
+
+    if (loading || !isAuthenticated) {
+        return (
+            <div className="min-h-screen bg-black text-white flex items-center justify-center">
+                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-screen bg-black text-white selection:bg-blue-500/30">

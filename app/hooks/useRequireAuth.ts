@@ -1,10 +1,11 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 
 export function useRequireAuth<T = any>(redirectIfUnauthenticated = true) {
     const router = useRouter();
+    const pathname = usePathname();
     const [user, setUser] = useState<T | null>(null);
     const [loading, setLoading] = useState(true);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -15,7 +16,7 @@ export function useRequireAuth<T = any>(redirectIfUnauthenticated = true) {
 
         if (!token || !storedUser) {
             if (redirectIfUnauthenticated) {
-                router.push("/login");
+                router.push(`/login?redirect=${encodeURIComponent(pathname)}`);
             }
             setLoading(false);
             return;

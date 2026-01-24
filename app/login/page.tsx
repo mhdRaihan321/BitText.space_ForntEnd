@@ -2,8 +2,8 @@
 
 import Navbar from "../../components/Navbar";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState, Suspense } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Lock, Mail, ArrowRight } from "lucide-react";
 import { useRequireAuth } from "../hooks/useRequireAuth";
 
@@ -14,20 +14,20 @@ interface User {
     role: string;
 }
 
-export default function Login() {
+function LoginForm() {
     const { user, isAuthenticated, setUser } = useRequireAuth<User>(false); // Use the hook and get setUser
     const [identifier, setIdentifier] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const redirectTo = searchParams.get("redirect") || "/dashboard";
 
     useEffect(() => {
         if (isAuthenticated) {
-            router.push("/dashboard");
+            router.push(redirectTo);
         }
-    }, [isAuthenticated, router]);
-
-
+    }, [isAuthenticated, router, redirectTo]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -47,7 +47,7 @@ export default function Login() {
             localStorage.setItem("refreshToken", data.refreshToken);
             localStorage.setItem("user", JSON.stringify(data.user));
             setUser(data.user);
-            router.push("/dashboard");
+            router.push(redirectTo);
         } catch (err: any) {
             setError(err.message);
         }
@@ -114,6 +114,11 @@ export default function Login() {
 
                     <a
                         href={`${process.env.NEXT_PUBLIC_API_URL}/auth/google`}
+                        onClick={() => {
+                            if (redirectTo !== "/dashboard") {
+                                sessionStorage.setItem("redirectAfterLogin", redirectTo);
+                            }
+                        }}
                         className="w-full bg-white text-black font-bold py-3 rounded-lg transition-all flex items-center justify-center gap-2 hover:bg-gray-100"
                     >
                         <img src="https://www.svgrepo.com/show/475656/google-color.svg" className="w-5 h-5" alt="Google" />
@@ -126,5 +131,13 @@ export default function Login() {
                 </div>
             </div>
         </div>
+    );
+}
+
+export default function Login() {
+    return (
+        <Suspense fallback={<div className="min-h-screen bg-black flex items-center justify-center"><ArrowRight className="w-10 h-10 text-blue-500 animate-spin" /></div>}>
+            <LoginForm />
+        </Suspense>
     );
 }
