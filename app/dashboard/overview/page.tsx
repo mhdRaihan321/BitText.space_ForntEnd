@@ -11,7 +11,7 @@ export default function OverviewPage() {
     const copyToClipboard = (text: string) => {
         if (!text) return;
         navigator.clipboard.writeText(text);
-        toast("Copied!");
+        toast.success("Copied to clipboard!");
     };
 
     return (

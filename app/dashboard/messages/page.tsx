@@ -18,10 +18,11 @@ export default function MessagesPage() {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!sendForm.deviceId) { toast("Please select a device"); return; }
-        if (!sendForm.to.trim()) { toast("Please enter a recipient"); return; }
-        if (!sendForm.message.trim()) { toast("Please enter a message"); return; }
+        if (!sendForm.deviceId) { toast.error("Please select a device"); return; }
+        if (!sendForm.to.trim()) { toast.error("Please enter a recipient"); return; }
+        if (!sendForm.message.trim()) { toast.error("Please enter a message"); return; }
 
+        const loadingToast = toast.loading("Sending message...");
         setSending(true);
         try {
             await api.post("/api/sms/send", {
@@ -32,12 +33,13 @@ export default function MessagesPage() {
             }, {
                 headers: { 'x-api-key': user?.api_key || '' }
             });
-            toast("Message Sent!");
+            toast.success("Message dispatched!", { id: loadingToast });
             setSendForm({ ...sendForm, to: "", message: "" });
             fetchDashboardData();
-        } catch (error) {
+        } catch (error: any) {
             console.error("Error sending message", error);
-            toast("Failed to send message.");
+            const errorMsg = error.response?.data?.error || "Failed to send message.";
+            toast.error(errorMsg, { id: loadingToast });
         } finally {
             setSending(false);
         }

@@ -2,6 +2,7 @@ import { X, Loader2 } from "lucide-react";
 import QRCode from "react-qr-code";
 import { useEffect, useState } from "react";
 import api from "../app/utils/api";
+import { toast } from "react-hot-toast";
 
 interface AddDeviceModalProps {
     isOpen: boolean;
@@ -43,6 +44,7 @@ export default function AddDeviceModal({ isOpen, onClose, onDeviceAdded, apiKey,
 
                     if (res.data.length > initialCount || isReactivated) {
                         // New device detected or existing one reactivated!
+                        toast.success("Device linked successfully!");
                         if (onDeviceAdded) onDeviceAdded();
                         onClose();
                     }

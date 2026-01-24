@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { Lock, Mail, User, Phone, ArrowRight } from "lucide-react";
 import { useRequireAuth } from "../hooks/useRequireAuth";
+import { toast } from "react-hot-toast";
 
 interface User {
     id: number;
@@ -57,6 +58,7 @@ export default function Register() {
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || "Registration failed");
 
+            toast.success("Account created successfully!");
             router.push("/login");
         } catch (err: any) {
             setError(err.message);

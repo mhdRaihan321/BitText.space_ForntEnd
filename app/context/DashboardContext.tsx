@@ -104,9 +104,10 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
         try {
             await api.delete(`/api/dashboard/devices/${id}`);
             await fetchDashboardData();
+            toast.success("Device removed successfully");
         } catch (error) {
             console.error("Error deleting device", error);
-            toast("Failed to delete device");
+            toast.error("Failed to delete device");
         }
     };
 
@@ -117,10 +118,11 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
                 const updatedUser = { ...user, api_key: res.data.api_key };
                 setUser(updatedUser);
                 localStorage.setItem("user", JSON.stringify(updatedUser));
+                toast.success("API Key generated successfully");
             }
         } catch (error) {
             console.error("Error generating API key", error);
-            toast("Failed to generate API Key");
+            toast.error("Failed to generate API Key");
         }
     };
 
