@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Send, History, Smartphone, RefreshCw, Layers } from "lucide-react";
 import api from "../../utils/api";
 import { StatusBadge } from "../../../components/DashboardComponents";
-
+import { toast } from "react-hot-toast";
 export default function MessagesPage() {
     const { user, devices, smsLogs, fetchDashboardData, recipients, templates } = useDashboard();
     const [messagingSubTab, setMessagingSubTab] = useState("send");
@@ -18,9 +18,9 @@ export default function MessagesPage() {
 
     const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!sendForm.deviceId) { alert("Please select a device"); return; }
-        if (!sendForm.to.trim()) { alert("Please enter a recipient"); return; }
-        if (!sendForm.message.trim()) { alert("Please enter a message"); return; }
+        if (!sendForm.deviceId) { toast("Please select a device"); return; }
+        if (!sendForm.to.trim()) { toast("Please enter a recipient"); return; }
+        if (!sendForm.message.trim()) { toast("Please enter a message"); return; }
 
         setSending(true);
         try {
@@ -32,12 +32,12 @@ export default function MessagesPage() {
             }, {
                 headers: { 'x-api-key': user?.api_key || '' }
             });
-            alert("Message Sent!");
+            toast("Message Sent!");
             setSendForm({ ...sendForm, to: "", message: "" });
             fetchDashboardData();
         } catch (error) {
             console.error("Error sending message", error);
-            alert("Failed to send message.");
+            toast("Failed to send message.");
         } finally {
             setSending(false);
         }

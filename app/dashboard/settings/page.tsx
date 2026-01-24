@@ -1,5 +1,6 @@
 "use client";
 
+import toast from "react-hot-toast";
 import { useDashboard } from "../../context/DashboardContext";
 import { Key, Copy, Activity } from "lucide-react";
 
@@ -9,7 +10,7 @@ export default function SettingsPage() {
     const copyToClipboard = (text: string) => {
         if (!text) return;
         navigator.clipboard.writeText(text);
-        alert("Copied!");
+        toast("Copied!");
     };
 
     return (

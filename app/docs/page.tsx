@@ -36,7 +36,10 @@ export default function Docs() {
                             <nav className="space-y-2">
                                 <a href="#send-sms" className="block text-gray-400 hover:text-blue-400 transition-colors">Send SMS</a>
                                 <a href="#sms-status" className="block text-gray-400 hover:text-blue-400 transition-colors">SMS Status</a>
+                                <a href="#sms-recipients" className="block text-gray-400 hover:text-blue-400 transition-colors">Recipients</a>
+                                <a href="#sms-history" className="block text-gray-400 hover:text-blue-400 transition-colors">SMS History</a>
                                 <a href="#list-devices" className="block text-gray-400 hover:text-blue-400 transition-colors">List Devices</a>
+                                <a href="#register-device" className="block text-gray-400 hover:text-blue-400 transition-colors">Register Device</a>
                             </nav>
                         </div>
                         <div>
@@ -141,7 +144,12 @@ export default function Docs() {
                                         <tr>
                                             <td className="p-4 font-mono text-blue-300 text-sm">deviceId</td>
                                             <td className="p-4 text-gray-500 text-sm italic">integer</td>
-                                            <td className="p-4 text-gray-300 text-sm">ID of the device to use. Defaults to the first active device.</td>
+                                            <td className="p-4 text-gray-300 text-sm">Optional. ID of the device to use.</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="p-4 font-mono text-blue-300 text-sm">messagetype</td>
+                                            <td className="p-4 text-gray-500 text-sm italic">string</td>
+                                            <td className="p-4 text-gray-300 text-sm">Optional. Use "OTP" to auto-format as an OTP message.</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -154,7 +162,8 @@ export default function Docs() {
                                         {`{
   "to": "+15550109999",
   "message": "Hello World!",
-  "deviceId": 7
+  "deviceId": 7,
+  "messagetype": "SMS"
 }`}
                                     </div>
                                 </div>
@@ -164,7 +173,119 @@ export default function Docs() {
                                         {`{
   "success": true,
   "sms_id": 1024,
-  "status": "pending"
+  "status": "QUEUED"
+}`}
+                                    </div>
+                                </div>
+                            </div>
+                        </section>
+
+                        {/* SMS Status Endpoint */}
+                        <section id="sms-status" className="pt-10 scroll-mt-32 space-y-6">
+                            <div className="flex items-center gap-4 mb-2">
+                                <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-extrabold rounded-md uppercase tracking-widest">GET</span>
+                                <h2 className="text-3xl font-bold">/sms/status/:id</h2>
+                            </div>
+                            <p className="text-gray-400">Get the delivery status of a previously sent SMS.</p>
+
+                            <div className="bg-white/[0.03] border border-white/10 p-4 rounded-xl font-mono text-sm leading-relaxed overflow-x-auto text-green-400">
+                                {`{
+  "status": "SENT"
+}`}
+                            </div>
+                            <p className="text-sm text-gray-500 italic">Possible status values: QUEUED, SENDING, SENT, FAILED.</p>
+                        </section>
+
+                        {/* List Devices Endpoint */}
+                        <section id="list-devices" className="pt-10 scroll-mt-32 space-y-6">
+                            <div className="flex items-center gap-4 mb-2">
+                                <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-extrabold rounded-md uppercase tracking-widest">GET</span>
+                                <h2 className="text-3xl font-bold">/device/list</h2>
+                            </div>
+                            <p className="text-gray-400">Retrieve a list of all your registered devices.</p>
+
+                            <div className="bg-white/[0.03] border border-white/10 p-4 rounded-xl font-mono text-sm leading-relaxed overflow-x-auto text-green-400">
+                                {`[
+  {
+    "id": 7,
+    "name": "My Android Phone",
+    "active": true,
+    "last_seen": "2026-01-24T12:00:00Z"
+  }
+]`}
+                            </div>
+                        </section>
+
+                        {/* Recipients Endpoint */}
+                        <section id="sms-recipients" className="pt-10 scroll-mt-32 space-y-6">
+                            <div className="flex items-center gap-4 mb-2">
+                                <span className="px-3 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-extrabold rounded-md uppercase tracking-widest">GET</span>
+                                <h2 className="text-3xl font-bold">/sms/recipients</h2>
+                            </div>
+                            <p className="text-gray-400">Gets a unique list of past recipients (phone numbers).</p>
+
+                            <div className="bg-white/[0.03] border border-white/10 p-4 rounded-xl font-mono text-sm leading-relaxed overflow-x-auto text-green-400">
+                                {`[
+  {"to": "+15550109999"},
+  {"to": "+15550108888"}
+]`}
+                            </div>
+                        </section>
+
+                        {/* Register Device Endpoint */}
+                        <section id="register-device" className="pt-10 scroll-mt-32 space-y-6">
+                            <div className="flex items-center gap-4 mb-2">
+                                <span className="px-3 py-1 bg-green-500/10 border border-green-500/20 text-green-400 text-sm font-extrabold rounded-md uppercase tracking-widest">POST</span>
+                                <h2 className="text-3xl font-bold">/device/register</h2>
+                            </div>
+                            <p className="text-gray-400">Register a new device or re-link an existing one.</p>
+
+                            <h3 className="text-xl font-bold text-white mt-8">Body Parameters</h3>
+                            <div className="border border-white/10 rounded-2xl overflow-hidden">
+                                <table className="w-full text-left">
+                                    <thead className="bg-white/5 border-b border-white/10">
+                                        <tr>
+                                            <th className="p-4 text-sm font-bold text-gray-400">Parameter</th>
+                                            <th className="p-4 text-sm font-bold text-gray-400">Type</th>
+                                            <th className="p-4 text-sm font-bold text-gray-400">Description</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-white/5">
+                                        <tr>
+                                            <td className="p-4 font-mono text-blue-300 text-sm">name</td>
+                                            <td className="p-4 text-gray-500 text-sm italic">string</td>
+                                            <td className="p-4 text-gray-300 text-sm">Display name for the device.</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="p-4 font-mono text-blue-300 text-sm">api_key</td>
+                                            <td className="p-4 text-gray-500 text-sm italic">string</td>
+                                            <td className="p-4 text-gray-300 text-sm">Optional. API key to link device to your account.</td>
+                                        </tr>
+                                        <tr>
+                                            <td className="p-4 font-mono text-blue-300 text-sm">device_id</td>
+                                            <td className="p-4 text-gray-500 text-sm italic">string</td>
+                                            <td className="p-4 text-gray-300 text-sm">Optional. ID of an existing device to re-link.</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8">
+                                <div className="space-y-4">
+                                    <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest">Request Payload</h4>
+                                    <div className="bg-white/[0.03] border border-white/10 p-4 rounded-xl font-mono text-sm leading-relaxed overflow-x-auto text-blue-300">
+                                        {`{
+  "name": "My New Device",
+  "api_key": "your_api_key_here"
+}`}
+                                    </div>
+                                </div>
+                                <div className="space-y-4">
+                                    <h4 className="text-sm font-bold text-gray-500 uppercase tracking-widest">Response Body</h4>
+                                    <div className="bg-white/[0.03] border border-white/10 p-4 rounded-xl font-mono text-sm leading-relaxed overflow-x-auto text-green-400">
+                                        {`{
+  "device_id": 42,
+  "device_secret": "ds_..."
 }`}
                                     </div>
                                 </div>

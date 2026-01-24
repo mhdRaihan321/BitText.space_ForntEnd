@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import api from "../utils/api";
 import { useRequireAuth } from "../hooks/useRequireAuth";
+import { toast } from "react-hot-toast";
 
 export interface User {
     id: number;
@@ -105,7 +106,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
             await fetchDashboardData();
         } catch (error) {
             console.error("Error deleting device", error);
-            alert("Failed to delete device");
+            toast("Failed to delete device");
         }
     };
 
@@ -119,7 +120,7 @@ export function DashboardProvider({ children }: { children: React.ReactNode }) {
             }
         } catch (error) {
             console.error("Error generating API key", error);
-            alert("Failed to generate API Key");
+            toast("Failed to generate API Key");
         }
     };
 

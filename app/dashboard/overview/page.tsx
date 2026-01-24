@@ -3,6 +3,7 @@
 import { useDashboard } from "../../context/DashboardContext";
 import { Zap, Download, Key, Send, Smartphone, Activity, Layers, Plus, Copy } from "lucide-react";
 import { StatsCard } from "../../../components/DashboardComponents";
+import toast from "react-hot-toast";
 
 export default function OverviewPage() {
     const { user, stats, generateApiKey, fetchDashboardData } = useDashboard();
@@ -10,7 +11,7 @@ export default function OverviewPage() {
     const copyToClipboard = (text: string) => {
         if (!text) return;
         navigator.clipboard.writeText(text);
-        alert("Copied!");
+        toast("Copied!");
     };
 
     return (
