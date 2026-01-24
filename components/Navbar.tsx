@@ -50,11 +50,15 @@ export default function Navbar() {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex items-center justify-between h-16">
                     <div className="flex items-center">
-                        <Link href="/" className="flex-shrink-0 flex items-center gap-2">
-                            <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                                <Smartphone className="w-5 h-5 text-white" />
+                        <Link href="/" className="flex-shrink-0 flex items-center gap-2 group">
+                            <div className="relative w-9 h-9 overflow-hidden rounded-lg bg-white/5 border border-white/10 group-hover:border-blue-500/50 transition-all p-1">
+                                <img
+                                    src="/onlyLogo.png"
+                                    alt="BitText Logo"
+                                    className="w-full h-full object-contain"
+                                />
                             </div>
-                            <span className="font-bold text-xl tracking-tight text-white">BitText</span>
+                            <span className="font-bold text-xl tracking-tight text-white group-hover:text-blue-400 transition-colors">BitText</span>
                         </Link>
                     </div>
                     <div className="hidden md:block">

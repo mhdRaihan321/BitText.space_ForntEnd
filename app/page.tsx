@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 import Link from "next/link";
 import { ArrowRight, Smartphone, Globe, Code, Zap, Key } from "lucide-react";
 import { motion } from "framer-motion";
@@ -16,7 +17,7 @@ interface User {
 }
 
 export default function Home() {
-  const { user, isAuthenticated } = useRequireAuth<User>();
+  const { user, isAuthenticated } = useRequireAuth<User>(false);
   const [selectedLang, setSelectedLang] = useState("python");
 
   const snippets: { [key: string]: { code: string, file: string } } = {
@@ -102,7 +103,7 @@ sendSMS();`
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 overflow-hidden">
+      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-blue-900/40 via-black to-black opacity-50" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <div className="text-center max-w-4xl mx-auto">
@@ -112,7 +113,7 @@ sendSMS();`
               transition={{ duration: 0.5 }}
             >
               <span className="inline-block py-1 px-3 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-sm font-medium mb-6">
-                v2.0 is now available
+                v1.0 is now available
               </span>
               <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight mb-8 bg-clip-text text-transparent bg-gradient-to-b from-white to-gray-400">
                 Turn your Android into an <br />
@@ -278,11 +279,7 @@ sendSMS();`
       </section>
 
       {/* Footer */}
-      <footer className="py-12 border-t border-white/5 text-center text-gray-500">
-        <div className="max-w-7xl mx-auto px-4">
-          <p>© 2026 BitText. Open Source SMS Gateway.</p>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 }

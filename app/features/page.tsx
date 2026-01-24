@@ -1,6 +1,7 @@
 "use client";
 
 import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import { Smartphone, Globe, Code, Zap, Shield, BarChart3, Cloud, Layers, CheckCircle2 } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
@@ -116,11 +117,7 @@ export default function Features() {
 
             </main>
 
-            <footer className="py-12 border-t border-white/5 text-center text-gray-500">
-                <div className="max-w-7xl mx-auto px-4">
-                    <p>© 2026 BitText. Open Source SMS Gateway.</p>
-                </div>
-            </footer>
+            <Footer />
         </div>
     );
 }
