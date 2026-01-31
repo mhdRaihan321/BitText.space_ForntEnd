@@ -1,10 +1,11 @@
 "use client";
 
 import { useDashboard } from "../../context/DashboardContext";
+import { useEffect } from "react";
 import { Smartphone, Plus, Link as LinkIcon, Trash2 } from "lucide-react";
 
 export default function DevicesPage() {
-    const { devices, setIsAddDeviceModalOpen, setSelectedDeviceId, handleDeleteDevice } = useDashboard();
+    const { devices, setIsAddDeviceModalOpen, setSelectedDeviceId, handleDeleteDevice, fetchDashboardData } = useDashboard();
 
     const formatLastSeen = (dateString: string) => {
         if (!dateString) return "Never";
@@ -19,6 +20,13 @@ export default function DevicesPage() {
             hour12: true
         });
     };
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            fetchDashboardData();
+        }, 10000); // Poll every 10 seconds
+        return () => clearInterval(interval);
+    }, [fetchDashboardData]);
 
     return (
         <div className="space-y-6">
@@ -61,8 +69,8 @@ export default function DevicesPage() {
                                         <p className="font-bold text-white text-lg">{device.name}</p>
                                         <div className="flex items-center gap-2 mt-1">
                                             <div className={`w-1.5 h-1.5 rounded-full ${device.active
-                                                    ? (device.status === 'SLEEPING' ? 'bg-yellow-500' : 'bg-green-500')
-                                                    : 'bg-red-500'
+                                                ? (device.status === 'SLEEPING' ? 'bg-yellow-500' : 'bg-green-500')
+                                                : 'bg-red-500'
                                                 }`} />
                                             <p className="text-xs text-gray-400 font-medium">Last seen: {formatLastSeen(device.last_seen || "")}</p>
                                         </div>
@@ -70,8 +78,8 @@ export default function DevicesPage() {
                                 </div>
                                 <div className="flex items-center gap-3">
                                     <div className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase ${device.active
-                                            ? (device.status === 'SLEEPING' ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20" : "bg-green-500/10 text-green-400 border border-green-500/20")
-                                            : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                        ? (device.status === 'SLEEPING' ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20" : "bg-green-500/10 text-green-400 border border-green-500/20")
+                                        : "bg-red-500/10 text-red-400 border border-red-500/20"
                                         }`}>
                                         {device.active ? (device.status === 'SLEEPING' ? "Sleeping" : "Online") : "Offline"}
                                     </div>
