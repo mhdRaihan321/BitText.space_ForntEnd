@@ -60,14 +60,20 @@ export default function DevicesPage() {
                                     <div>
                                         <p className="font-bold text-white text-lg">{device.name}</p>
                                         <div className="flex items-center gap-2 mt-1">
-                                            <div className={`w-1.5 h-1.5 rounded-full ${device.active ? 'bg-green-500' : 'bg-red-500'}`} />
+                                            <div className={`w-1.5 h-1.5 rounded-full ${device.active
+                                                    ? (device.status === 'SLEEPING' ? 'bg-yellow-500' : 'bg-green-500')
+                                                    : 'bg-red-500'
+                                                }`} />
                                             <p className="text-xs text-gray-400 font-medium">Last seen: {formatLastSeen(device.last_seen || "")}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-3">
-                                    <div className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase ${device.active ? "bg-green-500/10 text-green-400 border border-green-500/20" : "bg-red-500/10 text-red-400 border border-red-500/20"}`}>
-                                        {device.active ? "Online" : "Offline"}
+                                    <div className={`px-3 py-1.5 rounded-full text-xs font-bold tracking-wide uppercase ${device.active
+                                            ? (device.status === 'SLEEPING' ? "bg-yellow-500/10 text-yellow-400 border border-yellow-500/20" : "bg-green-500/10 text-green-400 border border-green-500/20")
+                                            : "bg-red-500/10 text-red-400 border border-red-500/20"
+                                        }`}>
+                                        {device.active ? (device.status === 'SLEEPING' ? "Sleeping" : "Online") : "Offline"}
                                     </div>
                                     {!device.active && (
                                         <button

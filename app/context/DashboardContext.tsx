@@ -23,6 +23,7 @@ export interface Device {
     active: boolean;
     last_seen?: string;
     secret?: string;
+    status?: string;
 }
 
 export interface Sms {
